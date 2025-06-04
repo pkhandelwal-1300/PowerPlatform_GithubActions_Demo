@@ -3,29 +3,26 @@ name: Power Platform Deployment
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   build:
     runs-on: self-hosted
 
     steps:
-      - name: Set up NuGet and Install Power Platform CLI
-        shell: cmd
+      - name: Add NuGet to PATH and verify
         run: |
-          setx PATH "C:\tools\nuget;%PATH%" /M
-          C:\tools\nuget\nuget.exe install Microsoft.PowerApps.CLI -OutputDirectory C:\tools\pac -Source https://api.nuget.org/v3/index.json -ExcludeVersion
-          setx PATH "C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%" /M
-          C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe help
-
-      - name: Restart runner to apply updated PATH
+          set PATH=C:\tools\nuget;%PATH%
+          where nuget
         shell: cmd
-        run: shutdown /r /t 5 /f
-        continue-on-error: true
 
-      # (You will need to re-run the workflow after the runner restarts.)
-
-      # The following steps will only work after reboot if you run the workflow again:
+      - name: Install Power Platform Tools
+        run: |
+          set PATH=C:\tools\nuget;%PATH%
+          nuget install Microsoft.PowerApps.CLI -Source https://api.nuget.org/v3/index.json -OutputDirectory C:\tools\pac -ExcludeVersion
+          set PATH=C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+          pac help
+        shell: cmd
 
       - name: Export Solution
         uses: microsoft/powerplatform-actions/export-solution@v1
