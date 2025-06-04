@@ -3,7 +3,7 @@ name: Power Platform Deployment
 on:
   push:
     branches:
-      - main
+      - main 
 
 jobs:
   build:
