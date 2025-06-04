@@ -10,6 +10,12 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Add NuGet to PATH
+        run: |
+          echo "## Adding NuGet to PATH"
+          echo "C:\tools\nuget" >> $env:GITHUB_PATH
+        shell: pwsh
+
       - name: Install Power Platform Tools
         uses: microsoft/powerplatform-actions/actions-install@v1
 
@@ -44,4 +50,3 @@ jobs:
           solution-folder: 'out/solutions/DemoSolution'
           solution-target-folder: 'src/solutions/DemoSolution'
           token: ${{ secrets.POWERPLATFORM_TOKEN }}
-
