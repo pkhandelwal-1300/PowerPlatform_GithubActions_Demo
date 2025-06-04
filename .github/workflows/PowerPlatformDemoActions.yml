@@ -10,21 +10,19 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Add NuGet to PATH and verify
+      - name: Set up NuGet and Install Power Platform CLI
         run: |
           set PATH=C:\tools\nuget;%PATH%
-          where nuget
-        shell: cmd
-
-      - name: Install Power Platform Tools
-        run: |
-          set PATH=C:\tools\nuget;%PATH%
-          nuget install Microsoft.PowerApps.CLI -Source https://api.nuget.org/v3/index.json -OutputDirectory C:\tools\pac -ExcludeVersion
+          echo "Installing Power Platform CLI..."
+          nuget install Microsoft.PowerApps.CLI -OutputDirectory C:\tools\pac -Source https://api.nuget.org/v3/index.json -ExcludeVersion
           set PATH=C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+          echo "Verifying pac..."
           pac help
         shell: cmd
 
       - name: Export Solution
+        run: |
+          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: 'https://orge547d4f3.crm4.dynamics.com'
