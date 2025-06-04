@@ -11,20 +11,25 @@ jobs:
 
     steps:
       - name: Set up NuGet and Install Power Platform CLI
-        run: |
-          set PATH=C:\tools\nuget;%PATH%
-          echo "Installing Power Platform CLI..."
-          nuget install Microsoft.PowerApps.CLI -OutputDirectory C:\tools\pac -Source https://api.nuget.org/v3/index.json -ExcludeVersion
-          set PATH=C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
-          echo "Verifying pac..."
-          pac help
         shell: cmd
+        run: |
+          setx PATH "C:\tools\nuget;%PATH%" /M
+          C:\tools\nuget\nuget.exe install Microsoft.PowerApps.CLI -OutputDirectory C:\tools\pac -Source https://api.nuget.org/v3/index.json -ExcludeVersion
+          setx PATH "C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%" /M
+          C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe help
+
+      - name: Restart runner to apply updated PATH
+        shell: cmd
+        run: shutdown /r /t 5 /f
+        continue-on-error: true
+
+      # (You will need to re-run the workflow after the runner restarts.)
+
+      # The following steps will only work after reboot if you run the workflow again:
 
       - name: Export Solution
-        run: |
-          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
         uses: microsoft/powerplatform-actions/export-solution@v1
-        with: 
+        with:
           environment-url: 'https://orge547d4f3.crm4.dynamics.com'
           user-name: 'Pragya.Khandelwal@wepa.eu'
           password-secret: ${{ secrets.PASSWORD }}
