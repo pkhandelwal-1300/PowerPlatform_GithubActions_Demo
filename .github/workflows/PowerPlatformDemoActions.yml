@@ -11,15 +11,16 @@ jobs:
     env:
       PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
     steps:
+
       - name: Install Power Platform CLI
         uses: microsoft/powerplatform-actions/actions-install@v1
-        
+
       - name: Verify nuget and pac are available
         run: |
           echo Checking nuget version...
           nuget.exe
           echo Checking pac version...
-          pac help
+          pac --version
         shell: cmd
  
       - name: Export Solution
