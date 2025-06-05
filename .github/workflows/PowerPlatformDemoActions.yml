@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Check NuGet and PAC availability
-        shell: pwsh
+        shell: powershell
         run: |
           $env:PATH = "C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;$env:PATH"
           Write-Host "Checking NuGet version..."
@@ -20,7 +20,7 @@ jobs:
           pac help
 
       - name: Authenticate with Power Platform
-        shell: pwsh
+        shell: powershell
         env:
           USERNAME: ${{ secrets.POWERPLATFORM_USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
@@ -30,7 +30,7 @@ jobs:
           pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "$env:USERNAME" --password "$env:PASSWORD"
 
       - name: Export Power Platform Solution
-        shell: pwsh
+        shell: powershell
         run: |
           $env:PATH = "C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;$env:PATH"
           pac solution export --name DemoSolution --path out\DemoSolution.zip --managed false --overwrite
@@ -44,7 +44,7 @@ jobs:
           overwrite-files: true
 
       - name: Publish Solution
-        shell: pwsh
+        shell: powershell
         run: |
           $env:PATH = "C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;$env:PATH"
           pac solution publish
