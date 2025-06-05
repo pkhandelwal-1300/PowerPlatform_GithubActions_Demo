@@ -10,18 +10,13 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Add NuGet to PATH and verify
-        run: |
-          set PATH=C:\tools\nuget;%PATH%
-          where nuget
-        shell: cmd
-
       - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Add PAC to PATH
         run: |
-          set PATH=C:\tools\nuget;%PATH%
-          nuget install Microsoft.PowerApps.CLI -Source https://api.nuget.org/v3/index.json -OutputDirectory C:\tools\pac -ExcludeVersion
-          set PATH=C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
-          pac help
+          echo "Adding PAC to PATH"
+          setx PATH "%PATH%;C:\Users\runneradmin\.local\Microsoft\PowerAppsCLI"
         shell: cmd
 
       - name: Export Solution
