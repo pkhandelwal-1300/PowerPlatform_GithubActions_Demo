@@ -19,13 +19,12 @@ jobs:
           Write-Host "Checking PAC CLI version..."
           pac help
 
-      
-      - name: Authenticate with Power Platform
+      - name: Authenticate with Power Platform using device code
         shell: powershell
         run: |
           $env:PATH = "C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;$env:PATH"
           pac auth clear
-
+          pac auth create --deviceCode --environment https://orge547d4f3.crm4.dynamics.com
 
       - name: Export Power Platform Solution
         shell: powershell
