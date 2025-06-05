@@ -9,16 +9,26 @@ jobs:
   build:
     runs-on: self-hosted
     env:
-      PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+      PATH: C:\tools\nuget;%PATH%
+
     steps:
-      - name: Verify nuget and pac are available
+      # Add NuGet to PATH (just to be safe)
+      - name: Add NuGet to PATH
         run: |
-          echo Checking nuget version...
-          nuget.exe
-          echo Checking pac version...
-          pac help
+          echo Adding NuGet to PATH
+          set PATH=C:\tools\nuget;%PATH%
         shell: cmd
 
+      # Install Power Platform CLI (PAC) using the official action
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      # Verify pac is installed (optional check)
+      - name: Verify pac is installed
+        run: pac help
+        shell: cmd
+
+      # Export Solution
       - name: Export Solution
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
@@ -29,6 +39,7 @@ jobs:
           solution-output-file: 'DemoSolution.zip'
           working-directory: 'out'
 
+      # Unpack Solution
       - name: Unpack Solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
@@ -37,6 +48,7 @@ jobs:
           solution-type: 'Unmanaged'
           overwrite-files: true
 
+      # Publish Solution
       - name: Publish Solution
         uses: microsoft/powerplatform-actions/publish-solution@v1
         with:
@@ -44,6 +56,7 @@ jobs:
           user-name: 'Pragya.Khandelwal@wepa.eu'
           password-secret: ${{ secrets.PASSWORD }}
 
+      # Prepare changes for source control check-in
       - name: Prepare solution changes for check-in into source control
         uses: microsoft/powerplatform-actions/branch-solution@v1
         with:
