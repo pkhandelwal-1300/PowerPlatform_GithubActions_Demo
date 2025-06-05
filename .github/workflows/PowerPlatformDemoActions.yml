@@ -9,24 +9,32 @@ jobs:
   build:
     runs-on: self-hosted
 
+    env:
+      # Set PAC and NuGet paths if required
+      PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+
     steps:
-      - name: Check tools availability
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Check NuGet and PAC CLI
         run: |
-          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
           echo Checking NuGet version...
           nuget
           echo Checking PAC CLI version...
           pac help
         shell: cmd
 
+      - name: Authenticate with PAC CLI
+        run: |
+          pac auth clear
+          pac auth create --url ${{ secrets.POWERPLATFORM_ENVIRONMENT_URL }} --username "${{ secrets.POWERPLATFORM_USER }}" --password "${{ secrets.PASSWORD }}"
+        shell: cmd
+
       - name: Export Solution
         run: |
-          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
-          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "%PASSWORD%"
           pac solution export --name DemoSolution --path out\DemoSolution.zip
         shell: cmd
-        env:
-          PASSWORD: ${{ secrets.PASSWORD }}
 
       - name: Unpack Solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
@@ -38,12 +46,8 @@ jobs:
 
       - name: Publish Solution
         run: |
-          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
-          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "%PASSWORD%"
           pac solution publish
         shell: cmd
-        env:
-          PASSWORD: ${{ secrets.PASSWORD }}
 
       - name: Prepare solution changes for check-in
         uses: microsoft/powerplatform-actions/branch-solution@v1
