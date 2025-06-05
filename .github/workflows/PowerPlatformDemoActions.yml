@@ -8,28 +8,9 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-
+    env:
+      PATH: C:\tools\nuget;C:\tools\pac;%PATH%
     steps:
-      # ✅ Add NuGet to PATH before installing CLI tools
-      - name: Add NuGet to PATH
-        run: |
-          set PATH=C:\tools\nuget;%PATH%
-          echo "NuGet path added"
-        shell: cmd
-
-      # ✅ Install PAC using the action
-      - name: Install Power Platform Tools
-        uses: microsoft/powerplatform-actions/actions-install@v1
-
-      # ✅ Add PAC to PATH (in this session only)
-      - name: Add PAC to PATH
-        run: |
-          echo "Adding PAC to PATH"
-          setx PATH "%PATH%;C:\Users\runneradmin\.local\Microsoft\PowerAppsCLI"
-          set PATH=%USERPROFILE%\.local\Microsoft\PowerAppsCLI;%PATH%
-          echo "PAC path added: %USERPROFILE%\.local\Microsoft\PowerAppsCLI"
-        shell: cmd
-
       - name: Export Solution
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
