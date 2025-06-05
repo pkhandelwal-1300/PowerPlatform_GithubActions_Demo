@@ -19,21 +19,12 @@ jobs:
           Write-Host "Checking PAC CLI version..."
           pac help
 
-      - name: Check secrets
-        run: |
-           if ($env:USERNAME) { Write-Host "USERNAME is set" } else { Write-Host "USERNAME is NOT set" }
-           if ($env:PASSWORD) { Write-Host "PASSWORD is set" } else { Write-Host "PASSWORD is NOT set" }
-        shell: powershell
-        env:
-           USERNAME: ${{ secrets.POWERPLATFORM_USERNAME }}
-           PASSWORD: ${{ secrets.POWERPLATFORM_PASSWORD }}
-       
+      
       - name: Authenticate with Power Platform
         shell: powershell
         run: |
           $env:PATH = "C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;$env:PATH"
           pac auth clear
-          pac auth create --environment https://orge547d4f3.crm4.dynamics.com --username pragya.khandelwal@wepa.eu --password 125@Pqws@125
 
 
       - name: Export Power Platform Solution
