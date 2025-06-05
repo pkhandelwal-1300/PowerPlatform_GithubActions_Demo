@@ -8,16 +8,15 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-
     env:
-      # Set PAC and NuGet paths if required
+      NODE_TLS_REJECT_UNAUTHORIZED: '0'
       PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Check NuGet and PAC CLI
+      - name: Verify tools
         run: |
           echo Checking NuGet version...
           nuget
@@ -25,16 +24,13 @@ jobs:
           pac help
         shell: cmd
 
-      - name: Authenticate with PAC CLI
+      - name: Authenticate and Export Solution
         run: |
-          pac auth clear
-          pac auth create --url ${{ secrets.POWERPLATFORM_ENVIRONMENT_URL }} --username "${{ secrets.POWERPLATFORM_USER }}" --password "${{ secrets.PASSWORD }}"
-        shell: cmd
-
-      - name: Export Solution
-        run: |
+          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "%PASSWORD%"
           pac solution export --name DemoSolution --path out\DemoSolution.zip
         shell: cmd
+        env:
+          PASSWORD: ${{ secrets.PASSWORD }}
 
       - name: Unpack Solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
@@ -46,8 +42,11 @@ jobs:
 
       - name: Publish Solution
         run: |
+          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "%PASSWORD%"
           pac solution publish
         shell: cmd
+        env:
+          PASSWORD: ${{ secrets.PASSWORD }}
 
       - name: Prepare solution changes for check-in
         uses: microsoft/powerplatform-actions/branch-solution@v1
