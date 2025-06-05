@@ -1,4 +1,4 @@
-name: Power Platform DeploymentMore actions
+name: Power Platform Deployment
 
 on:
   push:
@@ -9,8 +9,16 @@ jobs:
   build:
     runs-on: self-hosted
     env:
-      PATH: C:\tools\nuget;C:\tools\pac;%PATH%
+      PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
     steps:
+      - name: Verify nuget and pac are available
+        run: |
+          echo Checking nuget version...
+          nuget.exe
+          echo Checking pac version...
+          pac --version
+        shell: cmd
+
       - name: Export Solution
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
@@ -20,7 +28,6 @@ jobs:
           solution-name: DemoSolution
           solution-output-file: 'DemoSolution.zip'
           working-directory: 'out'
-          pac-location: 'C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe'  # Adjust path as needed
 
       - name: Unpack Solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
@@ -29,7 +36,6 @@ jobs:
           solution-folder: 'out/solutions/DemoSolution'
           solution-type: 'Unmanaged'
           overwrite-files: true
-          pac-location: 'C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe'
 
       - name: Publish Solution
         uses: microsoft/powerplatform-actions/publish-solution@v1
@@ -37,7 +43,6 @@ jobs:
           environment-url: 'https://orge547d4f3.crm4.dynamics.com'
           user-name: 'Pragya.Khandelwal@wepa.eu'
           password-secret: ${{ secrets.PASSWORD }}
-          pac-location: 'C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe'
 
       - name: Prepare solution changes for check-in into source control
         uses: microsoft/powerplatform-actions/branch-solution@v1
@@ -45,4 +50,3 @@ jobs:
           solution-folder: 'out/solutions/DemoSolution'
           solution-target-folder: 'src/solutions/DemoSolution'
           token: ${{ secrets.POWERPLATFORM_TOKEN }}
-          pac-location: 'C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe'
