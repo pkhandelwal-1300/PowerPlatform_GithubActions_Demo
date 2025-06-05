@@ -11,6 +11,60 @@ jobs:
     env:
       PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
     steps:
+      - name: Install Power Platform CLI
+        uses: microsoft/powerplatform-actions/actions-install@v1
+        
+      - name: Verify nuget and pac are available
+        run: |
+          echo Checking nuget version...
+          nuget.exe
+          echo Checking pac version...
+          pac help
+        shell: cmd
+ 
+      - name: Export Solution
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: 'https://orge547d4f3.crm4.dynamics.com'
+          user-name: 'Pragya.Khandelwal@wepa.eu'
+          password-secret: ${{ secrets.PASSWORD }}
+          solution-name: DemoSolution
+          solution-output-file: 'DemoSolution.zip'
+          working-directory: 'out'
+ 
+      - name: Unpack Solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: 'out/DemoSolution.zip'
+          solution-folder: 'out/solutions/DemoSolution'
+          solution-type: 'Unmanaged'
+          overwrite-files: true
+ 
+      - name: Publish Solution
+        uses: microsoft/powerplatform-actions/publish-solution@v1
+        with:
+          environment-url: 'https://orge547d4f3.crm4.dynamics.com'
+          user-name: 'Pragya.Khandelwal@wepa.eu'
+          password-secret: ${{ secrets.PASSWORD }}
+ 
+      - name: Prepare solution changes for check-in into source control
+        uses: microsoft/powerplatform-actions/branch-solution@v1
+        with:
+          solution-folder: 'out/solutions/DemoSolution'
+          solution-target-folder: 'src/solutions/DemoSolution'
+          token: ${{ secrets.POWERPLATFORM_TOKEN }}name: Power Platform Deployment
+ 
+on:
+  push:
+    branches:
+      - main
+ 
+jobs:
+  build:
+    runs-on: self-hosted
+    env:
+      PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+    steps:
       - name: Verify nuget and pac are available
         run: |
           echo Checking nuget version...
