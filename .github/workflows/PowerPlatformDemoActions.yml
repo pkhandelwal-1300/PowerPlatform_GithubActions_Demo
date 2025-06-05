@@ -10,33 +10,21 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-        env:
-          NODE_TLS_REJECT_UNAUTHORIZED: '0'  # Use with caution, debug only
+      - name: Set up tools in PATH
+        run: |
+          echo Setting PATH for NuGet and PAC CLI
+          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+          echo Checking NuGet version...
+          C:\tools\nuget\nuget.exe
+          echo Checking PAC CLI version...
+          C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe help
+        shell: cmd
 
-      - name: Check tools availability
+      - name: Export Solution
         run: |
           set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
-          git --version
-          nuget
-          pac help
-        shell: cmd
-
-      - name: Verify tools
-        run: |
-          echo Checking NuGet version...
-          nuget
-          echo Checking PAC CLI version...
-          pac help
-        shell: cmd
-
-      - name: Authenticate and Export Solution
-        run: |
-          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "%PASSWORD%"
-          pac solution export --name DemoSolution --path out\DemoSolution.zip
+          C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "125@Pqws@125"
+          C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe solution export --name DemoSolution --path out\DemoSolution.zip
         shell: cmd
         env:
           PASSWORD: ${{ secrets.PASSWORD }}
@@ -51,8 +39,9 @@ jobs:
 
       - name: Publish Solution
         run: |
-          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "%PASSWORD%"
-          pac solution publish
+          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+          C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.Khandelwal@wepa.eu" --password "125@Pqws@125"
+          C:\tools\pac\Microsoft.PowerApps.CLI\tools\pac.exe solution publish
         shell: cmd
         env:
           PASSWORD: ${{ secrets.PASSWORD }}
