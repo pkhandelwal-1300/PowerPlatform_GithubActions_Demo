@@ -10,30 +10,32 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Set up CLI path and check tools
+      - name: Check NuGet and PAC availability
         run: |
-          set PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
+          set "PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%"
           echo Checking NuGet version...
           nuget help
           echo Checking PAC CLI version...
           pac help
         shell: cmd
 
-      - name: Authenticate with user credentials
+      - name: Authenticate with Power Platform
         run: |
+          set "PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%"
           pac auth clear
-          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "Pragya.khandelwal@wepa.eu" --password "125@Pqws@125"
+          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "%USERNAME%" --password "%PASSWORD%"
         shell: cmd
         env:
           USERNAME: ${{ secrets.POWERPLATFORM_USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
 
-      - name: Export solution
+      - name: Export Power Platform Solution
         run: |
+          set "PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%"
           pac solution export --name DemoSolution --path out\DemoSolution.zip --managed false --overwrite
         shell: cmd
 
-      - name: Unpack solution
+      - name: Unpack Solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: 'out/DemoSolution.zip'
@@ -41,14 +43,15 @@ jobs:
           solution-type: 'Unmanaged'
           overwrite-files: true
 
-      - name: Publish solution
+      - name: Publish Solution
         run: |
+          set "PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%"
           pac solution publish
         shell: cmd
 
-      - name: Prepare solution for check-in
+      - name: Prepare for Git Check-In
         uses: microsoft/powerplatform-actions/branch-solution@v1
         with:
           solution-folder: 'out/solutions/DemoSolution'
           solution-target-folder: 'src/solutions/DemoSolution'
-          token: ${{ secrets.POWRPLTAFORM_TOKEN }}
+          token: ${{ secrets.POWERPLATFORM_TOKEN }}
