@@ -23,7 +23,8 @@ jobs:
         shell: powershell
         run: |
           $env:PATH = "C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;$env:PATH"
-          pac auth create --environment https://orge547d4f3.crm4.dynamics.com --username "${{ secrets.POWERPLATFORM_USERNAME }}" --password "${{ secrets.PASSWORD }}"
+          pac auth clear
+          pac auth create --environment https://orge547d4f3.crm4.dynamics.com --username pragya.khandelwal@wepa.eu --password 125@Pqws@125
 
 
       - name: Export Power Platform Solution
