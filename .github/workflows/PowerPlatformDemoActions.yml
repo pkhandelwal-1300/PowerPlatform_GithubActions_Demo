@@ -20,14 +20,15 @@ jobs:
         shell: cmd
 
       - name: Authenticate with Power Platform
-        run: |
-          set "PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%"
-          pac auth clear
-          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "%USERNAME%" --password "%PASSWORD%"
         shell: cmd
         env:
           USERNAME: ${{ secrets.POWERPLATFORM_USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          set "PATH=C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%"
+          pac auth clear
+          pac auth create --url https://orge547d4f3.crm4.dynamics.com --username "%USERNAME%" --password "%PASSWORD%"
+        
 
       - name: Export Power Platform Solution
         run: |
