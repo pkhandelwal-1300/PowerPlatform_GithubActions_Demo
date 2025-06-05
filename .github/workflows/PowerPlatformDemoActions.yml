@@ -8,18 +8,16 @@ on:
 jobs:
   build:
     runs-on: self-hosted
- 
+    env:
+      PATH: C:\tools\nuget;C:\tools\pac\Microsoft.PowerApps.CLI\tools;%PATH%
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
- 
       - name: Install Power Platform CLI
         uses: microsoft/powerplatform-actions/actions-install@v1
- 
+        
       - name: Verify nuget and pac are available
         run: |
           echo Checking nuget version...
-          nuget
+          nuget.exe
           echo Checking pac version...
           pac help
         shell: cmd
