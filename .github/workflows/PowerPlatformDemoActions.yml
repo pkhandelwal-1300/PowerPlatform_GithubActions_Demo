@@ -16,7 +16,7 @@ jobs:
           echo Checking nuget version...
           nuget.exe
           echo Checking pac version...
-          pac --version
+          pac help
         shell: cmd
 
       - name: Export Solution
